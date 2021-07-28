@@ -1,6 +1,3 @@
-import hashlib
-import uuid
-
 from fastapi import FastAPI, Body, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from starlette import status
@@ -82,8 +79,7 @@ def fake_hash_password(password: str):
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-class UserInDB(User):
-    hashed_password: str
+
 
 
 def get_user(db, username: str):
