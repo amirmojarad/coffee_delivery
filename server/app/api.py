@@ -32,11 +32,6 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Coffee Delivery Project", description="Purchase, Show Coffee List, etc!", version="0.1.0",
               tags_metadata=tags_metadata)
 
-def assign_coffee_to_users(user_id: int, coffee_name: str):
-    crud.get
-
-
-
 
 # Dependency
 def get_db():
@@ -52,6 +47,8 @@ async def get_root():
     return HTTPException(status_code=200, detail="Welcome!")
 
 
+# User
+
 @app.get("/users/", response_model=List[schemas.User], tags=["users"])
 async def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
     db_users = crud.get_users(db=db, skip=skip, limit=limit)
@@ -62,13 +59,12 @@ async def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 1
 
 @app.get("/users/{user_id}", response_model=schemas.User, tags=["users"])
 async def get_user(user_id, db: Session = Depends(get_db)):
-
+    db_user = crud.get_user(db=db, user_id=user_id)
+    if db_user:
+        return db_user
 
 
 @app.post("/users/", response_model=schemas.User, tags=["users"])
-async
-
-
 def post_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
@@ -76,14 +72,15 @@ def post_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
-@app.post("/users/{user_id}/", response_model=schemas.User, tags=["users"])
-async def post_coffee_to_user(user_id: int, coffee_name: str, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db=db, user_id=user_id)
-    if db_user:
+@app.post("/users/{user_id}/", tags=["users"])
+async def post_coffee_to_user(user_email: str, coffee_name: str, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db=db, email=user_email)
+    if db_user is None:
         raise HTTPException(status_code=404, detail="User Not Found!")
     db_coffee = crud.get_coffee_by_name(db=db, coffee_name=coffee_name)
-    if db_coffee:
+    if db_coffee is None:
         raise HTTPException(status_code=404, detail="Coffee Not Found!")
+    return HTTPException(status_code=200, detail="Added Successfully")
 
 
 @app.put("/users/{user_id}", response_model=schemas.User, tags=["users"])
@@ -91,6 +88,16 @@ async def put_user(user_id: int, username: str = "", full_name: str = "",
                    db: Session = Depends(get_db)):
     return crud.update_user(db=db, user_id=user_id, username=username, full_name=full_name)
 
+
+@app.get("/users/{user_id}/coffee/", tags=["users"])
+async def get_user_coffee(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(user_id=user_id, db=db)
+    if db_user:
+        return crud.get_user_coffee(user_id=user_id, db=db)
+    raise HTTPException(status_code=404, detail="User Not Found!")
+
+
+# Coffee
 
 @app.get("/coffee/", response_model=List[schemas.Coffee], tags=["coffee"])
 async def get_coffee(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):

@@ -67,12 +67,11 @@ def get_user_by_email(db: Session, email: str):
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
-
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
 def get_user_coffee(db: Session, user_id: int):
-    return db.query(models.Coffee).filter(models.User.id == user_id).all()
+    return db.query(models.Coffee).filter(models.Purchase.user_id == user_id).all()
 
 
 def get_coffee_by_name(db: Session, coffee_name: str):
@@ -112,12 +111,12 @@ def create_coffee(db: Session, coffee: schemas.CoffeeCreate):
     return db_coffee
 
 
-def create_ingredients(db: Session, name: str, coffee_id: int):
-    db_ingredients = models.Ingredient(name=name, coffee_id=coffee_id)
-    db.add(db_ingredients)
+def create_purchase(db: Session, user_id: int, coffee_id: int):
+    db_purchase = models.Purchase(user_id=user_id, coffee_id=coffee_id)
+    db.add(db_purchase)
     db.commit()
-    db.refresh(db_ingredients)
-    return db_ingredients
+    db.refresh(db_purchase)
+    return db_purchase
 
 
 # utils functions

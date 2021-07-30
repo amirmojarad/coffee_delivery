@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship
 from .database import Base
 
 
+# Entity
+
 class Coffee(Base):
     __tablename__ = "coffee"
 
@@ -20,23 +22,6 @@ class Coffee(Base):
     saturated_fat = Column(Float, default=0.0)
     total_fat = Column(Float, default=0.0)
     total_carbohydrates = Column(Float, default=0.0)
-    ingredients = relationship("Ingredient", back_populates="coffee")
-
-
-class CoffeeItem(Base):
-    __tablename__ = "coffeeItem"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("User", back_populates="coffee")
-
-
-class Ingredient(Base):
-    __tablename__ = "ingredients"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    coffee_id = Column(Integer, ForeignKey("coffee.id"))
-    coffee = relationship("Coffee", back_populates="ingredients")
 
 
 class User(Base):
@@ -48,4 +33,12 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     full_name = Column(String, default="")
     username = Column(String, default="")
-    coffee = relationship("CoffeeItem", back_populates="user")
+
+
+# Relationships
+
+class Purchase(Base):
+    __tablename__="purchase"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    coffee_id = Column(Integer, ForeignKey("coffee.id"))

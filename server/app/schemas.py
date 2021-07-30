@@ -7,7 +7,6 @@ class CoffeeBase(BaseModel):
 
 
 class CoffeeCreate(CoffeeBase):
-    # ingredients: List[str]
     caffeine: float
     calories: float
     cholesterol: float
@@ -19,7 +18,6 @@ class CoffeeCreate(CoffeeBase):
                 "caffeine": 0.0,
                 "calories": 0.0,
                 "cholesterol": 0.0,
-                # "ingredients": []
             }
         }
 
