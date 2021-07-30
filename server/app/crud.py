@@ -28,28 +28,22 @@ def update_user(db: Session, user_id: int, username: str = "", full_name: str = 
     return user
 
 
-def update_coffee(db: Session, coffee_name: str, caffeine: float = 0.0, calories: float = 0.0,
-                  cholesterol: float = 0.0,
+def update_coffee(db: Session, coffee_name: str,
                   sodium: float = 0.0, protein: float = 0.0,
                   dietary_fiber: float = 0.0,
                   sugars: float = 0.0,
                   saturated_fat: float = 0.0,
                   total_fat: float = 0.0,
                   total_carbohydrates: float = 0.0,
-                  ingredients: List[str] = List[str]
                   ):
     coffee = db.query(models.Coffee).filter(models.Coffee.name == coffee_name).first()
-    coffee.ingredients = ingredients
-    coffee.caffeine = caffeine
-    coffee.calories = calories
-    coffee.cholesterol = cholesterol
-    coffee.sodium = sodium
-    coffee.protein = protein
-    coffee.dietary_fiber = dietary_fiber
-    coffee.sugars = sugars
-    coffee.saturated_fat = saturated_fat
-    coffee.total_fat = total_fat
-    coffee.total_carbohydrates = total_carbohydrates
+    coffee.sodium = sodium if sodium != 0.0 else coffee.sodium
+    coffee.protein = protein if protein != 0.0 else coffee.protein
+    coffee.dietary_fiber = dietary_fiber if dietary_fiber != 0.0 else coffee.dietary_fiber
+    coffee.sugars = sugars if sugars != 0.0 else coffee.sugars
+    coffee.saturated_fat = saturated_fat if saturated_fat != 0.0 else coffee.saturated_fat
+    coffee.total_fat = total_fat if total_fat != 0.0 else coffee.total_fat
+    coffee.total_carbohydrates = total_carbohydrates if total_carbohydrates != 0.0 else coffee.total_carbohydrates
     db.add(coffee)
     db.commit()
     db.refresh(coffee)
