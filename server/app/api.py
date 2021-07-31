@@ -1,5 +1,5 @@
 from typing import List
-
+from fastapi.responses import FileResponse
 from fastapi import FastAPI, Body, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -105,6 +105,12 @@ async def get_coffee(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     if len(db_coffee) != 0:
         return db_coffee
     raise HTTPException(status_code=400, detail="Coffee List is Empty!")
+
+
+@app.get("/coffee/{coffee_name}/image/", tags=["coffee"])
+async def get_coffee_image(coffee_name: str, db: Session = Depends(get_db)):
+    coffee = crud.get_coffee_by_name(db=db, coffee_name=coffee_name)
+    return FileResponse(coffee.img)
 
 
 @app.post("/coffee/", response_model=schemas.Coffee, tags=["coffee"])

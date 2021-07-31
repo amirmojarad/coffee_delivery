@@ -34,3 +34,4 @@ for item in data["coffee_list"]:
     db.commit()
     db.refresh(coffee)
 
+db.close()

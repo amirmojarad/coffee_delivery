@@ -22,7 +22,7 @@ class Coffee(Base):
     saturated_fat = Column(Float, default=0.0)
     total_fat = Column(Float, default=0.0)
     total_carbohydrates = Column(Float, default=0.0)
-    img = Column(String, default="")
+    img = Column(String, unique=True, default="")
 
 
 class User(Base):
