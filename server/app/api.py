@@ -1,14 +1,8 @@
 from typing import List
-<<<<<<< HEAD
-
-from fastapi import FastAPI,  HTTPException, Depends
-=======
 from fastapi.responses import FileResponse
 from fastapi import FastAPI, Body, HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
->>>>>>> dev
 from sqlalchemy.orm import Session
-
+from fastapi.middleware.cors import CORSMiddleware
 from . import models, schemas, crud
 from .database import engine, SessionLocal
 
@@ -35,6 +29,21 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Coffee Delivery Project", description="Purchase, Show Coffee List, etc!", version="0.1.0",
               tags_metadata=tags_metadata)
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Dependency
@@ -145,8 +154,4 @@ async def put_coffee(coffee_name: str, db: Session = Depends(get_db),
                               saturated_fat=saturated_fat,
                               total_fat=total_fat,
                               total_carbohydrates=total_carbohydrates,
-<<<<<<< HEAD
                               )
-=======
-                              ingredients=ingredients)
->>>>>>> dev
