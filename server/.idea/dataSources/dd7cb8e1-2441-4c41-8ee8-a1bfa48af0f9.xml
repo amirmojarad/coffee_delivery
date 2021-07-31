@@ -370,7 +370,7 @@
     <package id="168" parent="1" name="rtree"/>
     <package id="169" parent="1" name="rtree_i32"/>
     <table id="170" parent="2" name="coffee"/>
-    <table id="171" parent="2" name="ingredients"/>
+    <table id="171" parent="2" name="purchase"/>
     <table id="172" parent="2" name="sqlite_master">
       <System>1</System>
     </table>
@@ -1381,49 +1381,51 @@
       <Position>12</Position>
       <DataType>FLOAT|0s</DataType>
     </column>
-    <column id="505" parent="170" name="user_id">
+    <column id="505" parent="170" name="img">
       <Position>13</Position>
-      <DataType>INTEGER|0s</DataType>
+      <DataType>VARCHAR|0s</DataType>
     </column>
     <index id="506" parent="170" name="ix_coffee_name">
       <ColNames>name</ColNames>
       <ColumnCollations></ColumnCollations>
+      <Unique>1</Unique>
     </index>
-    <key id="507" parent="170">
+    <index id="507" parent="170" name="ix_coffee_id">
+      <ColNames>id</ColNames>
+      <ColumnCollations></ColumnCollations>
+    </index>
+    <key id="508" parent="170">
       <ColNames>id</ColNames>
       <Primary>1</Primary>
+      <UnderlyingIndexName>ix_coffee_id</UnderlyingIndexName>
     </key>
-    <foreign-key id="508" parent="170">
-      <ColNames>user_id</ColNames>
-      <RefTableName>users</RefTableName>
-      <RefColNames>id</RefColNames>
-    </foreign-key>
     <column id="509" parent="171" name="id">
       <Position>1</Position>
       <DataType>INTEGER|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="510" parent="171" name="name">
+    <column id="510" parent="171" name="user_id">
       <Position>2</Position>
-      <DataType>VARCHAR|0s</DataType>
+      <DataType>INTEGER|0s</DataType>
     </column>
     <column id="511" parent="171" name="coffee_id">
       <Position>3</Position>
       <DataType>INTEGER|0s</DataType>
     </column>
-    <index id="512" parent="171" name="ix_ingredients_id">
+    <index id="512" parent="171" name="ix_purchase_id">
       <ColNames>id</ColNames>
       <ColumnCollations></ColumnCollations>
     </index>
-    <index id="513" parent="171" name="ix_ingredients_name">
-      <ColNames>name</ColNames>
-      <ColumnCollations></ColumnCollations>
-    </index>
-    <key id="514" parent="171">
+    <key id="513" parent="171">
       <ColNames>id</ColNames>
       <Primary>1</Primary>
-      <UnderlyingIndexName>ix_ingredients_id</UnderlyingIndexName>
+      <UnderlyingIndexName>ix_purchase_id</UnderlyingIndexName>
     </key>
+    <foreign-key id="514" parent="171">
+      <ColNames>user_id</ColNames>
+      <RefTableName>users</RefTableName>
+      <RefColNames>id</RefColNames>
+    </foreign-key>
     <foreign-key id="515" parent="171">
       <ColNames>coffee_id</ColNames>
       <RefTableName>coffee</RefTableName>
@@ -1466,20 +1468,28 @@
       <Position>4</Position>
       <DataType>BOOLEAN|0s</DataType>
     </column>
-    <index id="525" parent="173" name="ix_users_email">
+    <column id="525" parent="173" name="full_name">
+      <Position>5</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <column id="526" parent="173" name="username">
+      <Position>6</Position>
+      <DataType>VARCHAR|0s</DataType>
+    </column>
+    <index id="527" parent="173" name="ix_users_email">
       <ColNames>email</ColNames>
       <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
-    <index id="526" parent="173" name="ix_users_id">
+    <index id="528" parent="173" name="ix_users_id">
       <ColNames>id</ColNames>
       <ColumnCollations></ColumnCollations>
     </index>
-    <index id="527" parent="173" name="ix_users_hashed_password">
+    <index id="529" parent="173" name="ix_users_hashed_password">
       <ColNames>hashed_password</ColNames>
       <ColumnCollations></ColumnCollations>
     </index>
-    <key id="528" parent="173">
+    <key id="530" parent="173">
       <ColNames>id</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>ix_users_id</UnderlyingIndexName>

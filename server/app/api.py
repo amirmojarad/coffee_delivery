@@ -1,6 +1,12 @@
 from typing import List
+<<<<<<< HEAD
 
 from fastapi import FastAPI,  HTTPException, Depends
+=======
+from fastapi.responses import FileResponse
+from fastapi import FastAPI, Body, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+>>>>>>> dev
 from sqlalchemy.orm import Session
 
 from . import models, schemas, crud
@@ -110,6 +116,12 @@ async def get_coffee(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     raise HTTPException(status_code=400, detail="Coffee List is Empty!")
 
 
+@app.get("/coffee/{coffee_name}/image/", tags=["coffee"])
+async def get_coffee_image(coffee_name: str, db: Session = Depends(get_db)):
+    coffee = crud.get_coffee_by_name(db=db, coffee_name=coffee_name)
+    return FileResponse(coffee.img)
+
+
 @app.post("/coffee/", response_model=schemas.Coffee, tags=["coffee"])
 async def post_coffee(coffee: schemas.CoffeeCreate, db: Session = Depends(get_db)):
     db_user = crud.get_coffee_by_name(db, coffee_name=coffee.name)
@@ -133,4 +145,8 @@ async def put_coffee(coffee_name: str, db: Session = Depends(get_db),
                               saturated_fat=saturated_fat,
                               total_fat=total_fat,
                               total_carbohydrates=total_carbohydrates,
+<<<<<<< HEAD
                               )
+=======
+                              ingredients=ingredients)
+>>>>>>> dev

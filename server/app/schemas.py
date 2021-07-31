@@ -31,14 +31,7 @@ class Coffee(CoffeeCreate):
     saturated_fat: float
     total_fat: float
     total_carbohydrates: float
-
-    class Config:
-        orm_mode = True
-
-
-class CoffeeItem(CoffeeBase):
-    id: int
-    user_id: int
+    img = str
 
     class Config:
         orm_mode = True

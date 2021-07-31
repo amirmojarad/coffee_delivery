@@ -1,0 +1,102 @@
+{
+  "coffee_list": [
+    {
+      "name": "Americano",
+      "caffeine": 225.0,
+      "calories": 15.0,
+      "cholesterol": 0.0,
+      "sodium": 10.0,
+      "protein": 1.0,
+      "dietary_fiber": 0.0,
+      "sugars": 0.0,
+      "saturated_fat": 0.0,
+      "total_fat": 0.0,
+      "total_carbohydrates": 2.0,
+      "img": "files/americano.jpg"
+    },
+    {
+      "name": "Misto",
+      "caffeine": 150.0,
+      "calories": 110.0,
+      "cholesterol": 15.0,
+      "sodium": 100.0,
+      "protein": 7.0,
+      "dietary_fiber": 0.0,
+      "sugars": 10.0,
+      "saturated_fat": 2.0,
+      "total_fat": 4.0,
+      "total_carbohydrates": 10.0,
+      "img": "files/misto.jpg"
+    },
+    {
+      "name": "Cappuccino",
+      "caffeine": 150.0,
+      "calories": 140.0,
+      "cholesterol": 20.0,
+      "sodium": 120.0,
+      "protein": 9.0,
+      "dietary_fiber": 0.0,
+      "sugars": 12.0,
+      "saturated_fat": 2.0,
+      "total_fat": 4.0,
+      "total_carbohydrates": 14.0,
+      "img": "files/cappuccino.jpg"
+    },
+    {
+      "name": "Caramel Macchiato",
+      "caffeine": 150.0,
+      "calories": 15.0,
+      "cholesterol": 20.0,
+      "sodium": 120.0,
+      "protein": 1.0,
+      "dietary_fiber": 0.0,
+      "sugars": 12.0,
+      "saturated_fat": 2.0,
+      "total_fat": 4.0,
+      "total_carbohydrates": 2.0,
+      "img": "files/caramel_macchiato.jpg"
+    },
+    {
+      "name": "Espresso",
+      "caffeine": 150.0,
+      "calories": 15.0,
+      "cholesterol": 20.0,
+      "sodium": 120.0,
+      "protein": 1.0,
+      "dietary_fiber": 0.0,
+      "sugars": 12.0,
+      "saturated_fat": 2.0,
+      "total_fat": 4.0,
+      "total_carbohydrates": 2.0,
+      "img": "files/espresso.jpg"
+    },
+    {
+      "name": "Flat White",
+      "caffeine": 150.0,
+      "calories": 15.0,
+      "cholesterol": 20.0,
+      "sodium": 120.0,
+      "protein": 1.0,
+      "dietary_fiber": 0.0,
+      "sugars": 12.0,
+      "saturated_fat": 2.0,
+      "total_fat": 4.0,
+      "total_carbohydrates": 2.0,
+      "img": "files/flat_white.jpg"
+    },
+    {
+      "name": "Mocha",
+      "caffeine": 150.0,
+      "calories": 15.0,
+      "cholesterol": 20.0,
+      "sodium": 120.0,
+      "protein": 1.0,
+      "dietary_fiber": 0.0,
+      "sugars": 12.0,
+      "saturated_fat": 2.0,
+      "total_fat": 4.0,
+      "total_carbohydrates": 2.0,
+      "img": "files/mocha.jpg"
+    }
+  ]
+}
