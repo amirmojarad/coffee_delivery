@@ -22,6 +22,7 @@ class Coffee(Base):
     saturated_fat = Column(Float, default=0.0)
     total_fat = Column(Float, default=0.0)
     total_carbohydrates = Column(Float, default=0.0)
+    img = Column(String, default="")
 
 
 class User(Base):
@@ -38,7 +39,7 @@ class User(Base):
 # Relationships
 
 class Purchase(Base):
-    __tablename__="purchase"
+    __tablename__ = "purchase"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     coffee_id = Column(Integer, ForeignKey("coffee.id"))

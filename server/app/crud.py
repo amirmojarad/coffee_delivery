@@ -93,12 +93,12 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def create_user_coffee(db: Session, coffee: schemas.CoffeeItem, user_id: int):
-    db_coffee = models.CoffeeItem(**coffee.dict(), user_id=user_id)
-    db.add(db_coffee)
-    db.commit()
-    db.refresh(db_coffee)
-    return db_coffee
+# def create_user_coffee(db: Session, coffee: schemas.CoffeeItem, user_id: int):
+#     db_coffee = models.CoffeeItem(**coffee.dict(), user_id=user_id)
+#     db.add(db_coffee)
+#     db.commit()
+#     db.refresh(db_coffee)
+#     return db_coffee
 
 
 def create_coffee(db: Session, coffee: schemas.CoffeeCreate):
