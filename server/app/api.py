@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import List
 from fastapi.responses import FileResponse
 from fastapi import FastAPI, Body, HTTPException, Depends
@@ -6,7 +7,8 @@ from sqlalchemy.orm import Session
 from starlette import status
 from . import models, schemas, crud
 from .database import engine, SessionLocal
-from app.models import Coffee, User
+from .auth import auth
+from .auth import token_generator
 
 tags_metadata = [
     {
@@ -32,6 +34,8 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Coffee Delivery Project", description="Purchase, Show Coffee List, etc!", version="0.1.0",
               tags_metadata=tags_metadata)
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 # Dependency
 def get_db():
@@ -48,6 +52,22 @@ async def get_root():
 
 
 # User
+
+@app.post("/token", response_model=token_generator.Token)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = auth.authenticate_user(db=db, username=form_data.username, password=form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=token_generator.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = token_generator.create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
 
 @app.get("/users/", response_model=List[schemas.User], tags=["users"])
 async def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
