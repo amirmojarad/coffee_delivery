@@ -29,7 +29,6 @@ def update_user(db: Session, username: str, full_name: str = "", access_token: s
     return user
 
 
-<<<<<<< HEAD
 def update_coffee(db: Session, coffee_name: str,
                   sodium: float = 0.0, protein: float = 0.0,
                   dietary_fiber: float = 0.0,
@@ -52,8 +51,6 @@ def update_coffee(db: Session, coffee_name: str,
     return coffee
 
 
-=======
->>>>>>> dev
 # Read
 
 

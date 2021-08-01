@@ -1,12 +1,10 @@
 from datetime import timedelta
 from fastapi.responses import FileResponse
-<<<<<<< HEAD
 from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from . import models, schemas, crud
 from .database import engine, SessionLocal
-=======
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -14,7 +12,6 @@ from . import models, schemas, crud
 from .database import engine, SessionLocal
 from .auth import auth
 from .auth import token_generator
->>>>>>> dev
 
 tags_metadata = [
     {
@@ -40,7 +37,6 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Coffee Delivery Project", description="Purchase, Show Coffee List, etc!", version="0.1.0",
               tags_metadata=tags_metadata)
 
-<<<<<<< HEAD
 origins = [
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
@@ -55,9 +51,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-=======
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
->>>>>>> dev
 
 
 # Dependency
@@ -68,20 +62,11 @@ def get_db():
     finally:
         db.close()
 
-
-<<<<<<< HEAD
-# @app.get("/images/")
-# async def download_files_stream():
-#     return FileResponse("files/1.jpg")
-#
-
 @app.get("/")
 async def get_root():
     return HTTPException(status_code=200, detail="Welcome!")
 
 
-=======
->>>>>>> dev
 # User
 
 @app.post("/users/sign_up", tags=["users"])
@@ -115,7 +100,7 @@ async def get_user(username: str, db: Session = Depends(get_db), token: str = He
         return db_user
 
 
-@app.put("/users/{user_id}", response_model=schemas.User, tags=["users"])
+@app.put("/users/{username}", response_model=schemas.User, tags=["users"])
 async def put_user(username: str, full_name: str = "",
                    token: str = Header(None),
                    email: str = "",
@@ -168,32 +153,4 @@ async def get_coffee_image(coffee_name: str, db: Session = Depends(get_db)):
     coffee = crud.get_coffee_by_name(db=db, coffee_name=coffee_name)
     print(coffee.img)
     return FileResponse(coffee.img)
-<<<<<<< HEAD
 
-
-@app.post("/coffee/", response_model=schemas.Coffee, tags=["coffee"])
-async def post_coffee(coffee: schemas.CoffeeCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_coffee_by_name(db, coffee_name=coffee.name)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Coffee Already Exist!")
-    return crud.create_coffee(db=db, coffee=coffee)
-
-
-@app.put("/coffee/{coffee_name}", response_model=schemas.Coffee, tags=["coffee"])
-async def put_coffee(coffee_name: str, db: Session = Depends(get_db),
-                     sodium: float = 0.0, protein: float = 0.0,
-                     dietary_fiber: float = 0.0,
-                     sugars: float = 0.0,
-                     saturated_fat: float = 0.0,
-                     total_fat: float = 0.0,
-                     total_carbohydrates: float = 0.0):
-    return crud.update_coffee(coffee_name=coffee_name, db=db,
-                              sodium=sodium, protein=protein,
-                              dietary_fiber=dietary_fiber,
-                              sugars=sugars,
-                              saturated_fat=saturated_fat,
-                              total_fat=total_fat,
-                              total_carbohydrates=total_carbohydrates,
-                              )
-=======
->>>>>>> dev
