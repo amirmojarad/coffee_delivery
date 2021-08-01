@@ -24,6 +24,7 @@ class CoffeeCreate(CoffeeBase):
 
 class Coffee(CoffeeCreate):
     id: int
+    img = str
     sodium: float
     protein: float
     dietary_fiber: float
@@ -31,7 +32,6 @@ class Coffee(CoffeeCreate):
     saturated_fat: float
     total_fat: float
     total_carbohydrates: float
-    img = str
 
     class Config:
         orm_mode = True

@@ -1,6 +1,6 @@
 from typing import List
 from fastapi.responses import FileResponse
-from fastapi import FastAPI, Body, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from . import models, schemas, crud
@@ -117,7 +117,7 @@ async def get_user_coffee(user_id: int, db: Session = Depends(get_db)):
 
 # Coffee
 
-@app.get("/coffee/", response_model=List[schemas.Coffee], tags=["coffee"])
+@app.get("/coffee/", tags=["coffee"])
 async def get_coffee(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_coffee = crud.get_coffee(db=db, limit=limit, skip=skip)
     if len(db_coffee) != 0:
@@ -128,6 +128,7 @@ async def get_coffee(skip: int = 0, limit: int = 100, db: Session = Depends(get_
 @app.get("/coffee/{coffee_name}/image/", tags=["coffee"])
 async def get_coffee_image(coffee_name: str, db: Session = Depends(get_db)):
     coffee = crud.get_coffee_by_name(db=db, coffee_name=coffee_name)
+    print(coffee.img)
     return FileResponse(coffee.img)
 
 
