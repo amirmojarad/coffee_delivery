@@ -38,7 +38,7 @@ class Coffee(CoffeeCreate):
 
 
 class UserBase(BaseModel):
-    email: str
+    username: str
 
 
 class UserCreate(UserBase):
@@ -47,11 +47,10 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-    username: str
     hashed_password: str
     full_name: str
     is_active: bool
-    items: List[str] = []
+    email: str
 
     class Config:
         orm_mode = True

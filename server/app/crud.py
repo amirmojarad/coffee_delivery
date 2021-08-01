@@ -1,9 +1,9 @@
 import hashlib
 import uuid
-from typing import List
 
 from sqlalchemy.orm import Session
-from . import models, schemas
+from . import models
+from .auth import password_hashing
 
 """
 CRUD = Create, Read, Update, Delete
@@ -18,16 +18,18 @@ you can more easily reuse them in multiple parts and also add unit tests for the
 """
 
 
-def update_user(db: Session, user_id: int, username: str = "", full_name: str = ""):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    user.username = user.username if username == "" else username
+def update_user(db: Session, username: str, full_name: str = "", access_token: str = "", email: str = ""):
+    user = db.query(models.User).filter(models.User.username == username).first()
     user.full_name = user.full_name if full_name == "" else full_name
+    user.access_token = user.access_token if access_token == "" else access_token
+    user.email = user.email if email == "" else email
     db.add(user)
     db.commit()
     db.refresh(user)
     return user
 
 
+<<<<<<< HEAD
 def update_coffee(db: Session, coffee_name: str,
                   sodium: float = 0.0, protein: float = 0.0,
                   dietary_fiber: float = 0.0,
@@ -50,14 +52,13 @@ def update_coffee(db: Session, coffee_name: str,
     return coffee
 
 
+=======
+>>>>>>> dev
 # Read
 
-def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
 
-
-def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
+def get_user_by_username(db: Session, username: str):
+    return db.query(models.User).filter(models.User.username == username).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
@@ -65,7 +66,8 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def get_user_coffee(db: Session, user_id: int):
-    return db.query(models.Coffee).filter(models.Purchase.user_id == user_id).all()
+    return db.query(models.Coffee).filter(models.Purchase.user_id == user_id).filter(
+        models.Purchase.coffee_id == models.Coffee.id).all()
 
 
 def get_coffee_by_name(db: Session, coffee_name: str):
@@ -78,31 +80,13 @@ def get_coffee(db: Session, skip: int = 0, limit: int = 100):
 
 # Create
 
-def create_user(db: Session, user: schemas.UserCreate):
-    hashed_password = hash_password(user.password)
-    db_user = models.User(email=user.email, hashed_password=hashed_password)
+def create_user(db: Session, username: str, password: str):
+    hashed_password = password_hashing.generate_hash_password(password)
+    db_user = models.User(username=username, hashed_password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
-
-
-# def create_user_coffee(db: Session, coffee: schemas.CoffeeItem, user_id: int):
-#     db_coffee = models.CoffeeItem(**coffee.dict(), user_id=user_id)
-#     db.add(db_coffee)
-#     db.commit()
-#     db.refresh(db_coffee)
-#     return db_coffee
-
-
-def create_coffee(db: Session, coffee: schemas.CoffeeCreate):
-    db_coffee = models.Coffee(name=coffee.name, caffeine=coffee.caffeine, calories=coffee.calories,
-                              cholesterol=coffee.cholesterol)
-
-    db.add(db_coffee)
-    db.commit()
-    db.refresh(db_coffee)
-    return db_coffee
 
 
 def create_purchase(db: Session, user_id: int, coffee_id: int):
