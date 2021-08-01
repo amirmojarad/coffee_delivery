@@ -1,10 +1,8 @@
 from datetime import timedelta
-from typing import List
 from fastapi.responses import FileResponse
-from fastapi import FastAPI, Body, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from starlette import status
 from . import models, schemas, crud
 from .database import engine, SessionLocal
 from .auth import auth
@@ -46,30 +44,23 @@ def get_db():
         db.close()
 
 
-@app.get("/")
-async def get_root():
-    return HTTPException(status_code=200, detail="Welcome!")
-
-
 # User
 
-@app.post("/token", response_model=token_generator.Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = auth.authenticate_user(db=db, username=form_data.username, password=form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+@app.post("/users/sign_up", tags=["users"])
+async def users_sign_up(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = auth.authenticate_user(username=form_data.username, db=db, password=form_data.password)
+    if user:
+        raise HTTPException(status_code=400, detail="User Already Exist")
+    new_user = crud.create_user(db=db, username=form_data.username, password=form_data.password)
     access_token_expires = timedelta(minutes=token_generator.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = token_generator.create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": form_data.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    new_user.access_token = access_token
+    return crud.update_user(db=db, username=new_user.username, access_token=access_token)
 
 
-@app.get("/users/", response_model=List[schemas.User], tags=["users"])
+@app.get("/users/", tags=["users"])
 async def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
     db_users = crud.get_users(db=db, skip=skip, limit=limit)
     if len(db_users) == 0:
@@ -77,49 +68,56 @@ async def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 1
     return db_users
 
 
-@app.get("/users/{user_id}", response_model=schemas.User, tags=["users"])
-async def get_user(user_id, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db=db, user_id=user_id)
+@app.get("/users/{username}", tags=["users"], )
+async def get_user(username: str, db: Session = Depends(get_db), token: str = Header(None)):
+    db_user = crud.get_user_by_username(db=db, username=username)
+    if db_user.access_token != token:
+        raise HTTPException(status_code=401, detail="Not Authorized")
     if db_user:
         return db_user
 
 
-@app.post("/users/", response_model=schemas.User, tags=["users"])
-def post_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
+@app.put("/users/{user_id}", response_model=schemas.User, tags=["users"])
+async def put_user(username: str, full_name: str = "",
+                   token: str = Header(None),
+                   email: str = "",
+                   db: Session = Depends(get_db)):
+    user = crud.get_user_by_username(username=username, db=db)
+    if user:
+        if user.access_token != token:
+            raise HTTPException(status_code=401, detail="Not Authorized")
+        return crud.update_user(db=db, username=username, full_name=full_name, email=email)
+    raise HTTPException(status_code=404, detail="User Not Found")
+
+
+@app.get("/users/{username}/coffee/", tags=["users"])
+async def get_user_coffee(username: str, db: Session = Depends(get_db), token: str = Header(None)):
+    db_user = crud.get_user_by_username(username=username, db=db)
     if db_user:
-        raise HTTPException(status_code=400, detail="User Already Exist!")
-    return crud.create_user(db=db, user=user)
+        if db_user.access_token == token:
+            return crud.get_user_coffee(user_id=db_user.id, db=db)
+        raise HTTPException(status_code=401, detail="Not Authorized")
+    raise HTTPException(status_code=404, detail="User Not Found!")
 
 
-@app.post("/users/{user_id}/", tags=["users"])
-async def post_coffee_to_user(user_email: str, coffee_name: str, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db=db, email=user_email)
+@app.post("/users/{username}/", tags=["users"])
+async def post_coffee_to_user(username: str, coffee_name: str, db: Session = Depends(get_db),
+                              token: str = Header(None)):
+    db_user = crud.get_user_by_username(db=db, username=username)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User Not Found!")
+    if db_user.access_token != token:
+        raise HTTPException(status_code=401, detail="Not Authorized")
     db_coffee = crud.get_coffee_by_name(db=db, coffee_name=coffee_name)
     if db_coffee is None:
         raise HTTPException(status_code=404, detail="Coffee Not Found!")
+    crud.create_purchase(db=db, user_id=db_user.id, coffee_id=db_coffee.id)
     return HTTPException(status_code=200, detail="Added Successfully")
-
-
-@app.put("/users/{user_id}", response_model=schemas.User, tags=["users"])
-async def put_user(user_id: int, username: str = "", full_name: str = "",
-                   db: Session = Depends(get_db)):
-    return crud.update_user(db=db, user_id=user_id, username=username, full_name=full_name)
-
-
-@app.get("/users/{user_id}/coffee/", tags=["users"])
-async def get_user_coffee(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(user_id=user_id, db=db)
-    if db_user:
-        return crud.get_user_coffee(user_id=user_id, db=db)
-    raise HTTPException(status_code=404, detail="User Not Found!")
 
 
 # Coffee
 
-@app.get("/coffee/", response_model=List[schemas.Coffee], tags=["coffee"])
+@app.get("/coffee/", tags=["coffee"])
 async def get_coffee(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_coffee = crud.get_coffee(db=db, limit=limit, skip=skip)
     if len(db_coffee) != 0:
@@ -131,32 +129,3 @@ async def get_coffee(skip: int = 0, limit: int = 100, db: Session = Depends(get_
 async def get_coffee_image(coffee_name: str, db: Session = Depends(get_db)):
     coffee = crud.get_coffee_by_name(db=db, coffee_name=coffee_name)
     return FileResponse(coffee.img)
-
-
-@app.post("/coffee/", response_model=schemas.Coffee, tags=["coffee"])
-async def post_coffee(coffee: schemas.CoffeeCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_coffee_by_name(db, coffee_name=coffee.name)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Coffee Already Exist!")
-    return crud.create_coffee(db=db, coffee=coffee)
-
-
-@app.put("/coffee/{coffee_name}", response_model=schemas.Coffee, tags=["coffee"])
-async def put_coffee(coffee_name: str, db: Session = Depends(get_db), caffeine: float = 0.0, calories: float = 0.0,
-                     cholesterol: float = 0.0,
-                     sodium: float = 0.0, protein: float = 0.0,
-                     dietary_fiber: float = 0.0,
-                     sugars: float = 0.0,
-                     saturated_fat: float = 0.0,
-                     total_fat: float = 0.0,
-                     total_carbohydrates: float = 0.0,
-                     ingredients: List[str] = []):
-    return crud.update_coffee(coffee_name=coffee_name, db=db, caffeine=caffeine, calories=calories,
-                              cholesterol=cholesterol,
-                              sodium=sodium, protein=protein,
-                              dietary_fiber=dietary_fiber,
-                              sugars=sugars,
-                              saturated_fat=saturated_fat,
-                              total_fat=total_fat,
-                              total_carbohydrates=total_carbohydrates,
-                              ingredients=ingredients)
