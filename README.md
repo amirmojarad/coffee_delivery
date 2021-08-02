@@ -20,9 +20,8 @@ after review and test, should merge into `main` branch
 Request
 
 ```dart
-       var response = await dio.get('http://localhost:8080/users/amir',
-        options: Options(headers: {
-          "token":
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbWlyIiwiZXhwIjoxNjI3ODI2Njg3fQ.jyMWAN3o0qF07xmID0T15wowdWT1Ku0BUcCPWlVLafU"
+var response = await dio.get('SERVER/users/amir',
+       options: Options(headers: {
+          "token": token
         })); 
 ```
