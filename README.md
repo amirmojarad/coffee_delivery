@@ -90,5 +90,38 @@ Response
     "username": string
   },
 ```
+### GET User's Coffee
 
+Request
+```dart
+var response = await dio.get(
+      'http://localhost:8080/users/{username}/coffee/',
+      options: Options(
+        headers: {
+          "token": token
+        },
+      ),
+    );
+```
+
+Response
+```json
+[
+  {
+    "id": int,
+    "caffeine": float,
+    "cholesterol": float,
+    "protein": float,
+    "sugars": float,
+    "total_fat": float,
+    "img": string,
+    "calories": float,
+    "name": string,
+    "sodium": float,
+    "dietary_fiber": float,
+    "saturated_fat": float,
+    "total_carbohydrates": float
+  },
+]
+```
 
