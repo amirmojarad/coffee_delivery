@@ -144,7 +144,7 @@ Response
 ```json
 {
        "status_code": 200,
-       "detail": Added Successfully,
+       "detail": "Added Successfully",
        "headers": null
 }
 
