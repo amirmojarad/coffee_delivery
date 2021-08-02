@@ -125,3 +125,29 @@ Response
 ]
 ```
 
+### POST Coffee to User
+
+Request
+```dart
+var response = await dio.post(
+      'URL_ADDRESS/users/{username}/coffee/',
+      queryParameters: {"coffee_name": coffee_name},
+      options: Options(
+        headers: {
+          "token": token
+          },
+      ),
+    );
+```
+
+Response
+```json
+{
+       status_code: 200,
+       detail: Added Successfully,
+       headers: null
+}
+
+```
+
+
