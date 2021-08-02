@@ -123,7 +123,7 @@ async def get_user_coffee(username: str, db: Session = Depends(get_db), token: s
     raise HTTPException(status_code=404, detail="User Not Found!")
 
 
-@app.post("/users/{username}/", tags=["users"])
+@app.post("/users/{username}/coffee/", tags=["users"])
 async def post_coffee_to_user(username: str, coffee_name: str, db: Session = Depends(get_db),
                               token: str = Header(None)):
     db_user = crud.get_user_by_username(db=db, username=username)
