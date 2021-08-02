@@ -20,8 +20,21 @@ after review and test, should merge into `main` branch
 Request
 
 ```dart
-var response = await dio.get('SERVER/users/amir',
+var response = await dio.get(URL_ADDRESS,
        options: Options(headers: {
           "token": token
         })); 
+```
+
+Response
+```json
+ {
+    "id": int,
+    "full_name": string,
+    "is_active": boolean,
+    "access_token": string,
+    "email": string,
+    "hashed_password": string,
+    "username": string
+  },
 ```
