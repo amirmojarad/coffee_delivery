@@ -14,13 +14,13 @@ after review and test, should merge into `main` branch
 
 ## Requests and Responses
 
-* GET User
+### GET User
 `/users/{username}`
 
 Request
 
 ```dart
-var response = await Dio().get(URL_ADDRESS,
+var response = await Dio().get(URL_ADDRESS/users/{username},
        options: Options(headers: {
           "token": token
         })); 
@@ -38,13 +38,13 @@ Response
     "username": string
   },
 ```
-* Post User
+### POST User
 
 Request
 
 ```dart
 var response = await dio.post(
-      'http://localhost:8080/users/sign_up',
+      'URL_ADDRESS/users/sign_up',
       options: Options(contentType: Headers.formUrlEncodedContentType),
       data: {
         "username": "test_username",
@@ -64,3 +64,31 @@ Response
     "username": string
   },
 ```
+### PUT User
+
+Request
+```dart
+var response = await Dio().put('URL_ADDRESS/users/{username}',
+        options: Options(headers: {
+          "token": token
+        }),
+        queryParameters: {
+          "full_name": Optional[str],
+          "email": Optional[str]
+        });
+```
+
+Response
+```json
+ {
+    "id": int,
+    "full_name": string,
+    "is_active": boolean,
+    "access_token": string,
+    "email": string,
+    "hashed_password": string,
+    "username": string
+  },
+```
+
+
