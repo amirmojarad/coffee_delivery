@@ -1,10 +1,6 @@
 from datetime import timedelta
 from fastapi.responses import FileResponse
-from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
-from . import models, schemas, crud
-from .database import engine, SessionLocal
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session

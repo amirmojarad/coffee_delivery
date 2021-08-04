@@ -6,7 +6,7 @@ from app.models import Coffee
 
 file = open('coffee_list.json')
 data = json.load(file)
-SQLALCHEMY_DATABASE_URL = "sqlite:///./db/sql_app.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
