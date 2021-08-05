@@ -19,6 +19,8 @@ you can more easily reuse them in multiple parts and also add unit tests for the
 
 
 def update_user(db: Session, username: str, full_name: str = "", access_token: str = "", email: str = ""):
+    # get some optional arguments and fetch user with username from database
+    # then set it new arguments as attributes into db model
     user = db.query(models.User).filter(models.User.username == username).first()
     user.full_name = user.full_name if full_name == "" else full_name
     user.access_token = user.access_token if access_token == "" else access_token
@@ -37,6 +39,7 @@ def update_coffee(db: Session, coffee_name: str,
                   total_fat: float = 0.0,
                   total_carbohydrates: float = 0.0,
                   ):
+    # update coffee information with some attributes
     coffee = db.query(models.Coffee).filter(models.Coffee.name == coffee_name).first()
     coffee.sodium = sodium if sodium != 0.0 else coffee.sodium
     coffee.protein = protein if protein != 0.0 else coffee.protein
@@ -55,29 +58,35 @@ def update_coffee(db: Session, coffee_name: str,
 
 
 def get_user_by_username(db: Session, username: str):
+    # query from users table if username == username
     return db.query(models.User).filter(models.User.username == username).first()
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
+    # get all users from [skip, limit]
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
 def get_user_coffee(db: Session, user_id: int):
+    # return coffee from purchase table when user_id == user_id and coffee_id == coffee_id
     return db.query(models.Coffee).filter(models.Purchase.user_id == user_id).filter(
         models.Purchase.coffee_id == models.Coffee.id).all()
 
 
 def get_coffee_by_name(db: Session, coffee_name: str):
+    # return specific coffee from its coffee_name
     return db.query(models.Coffee).filter(models.Coffee.name == coffee_name).first()
 
 
 def get_coffee(db: Session, skip: int = 0, limit: int = 100):
+    # get all coffee in range [skip, limit]
     return db.query(models.Coffee).offset(skip).limit(limit).all()
 
 
 # Create
 
 def create_user(db: Session, username: str, password: str):
+    # first hash the given password and set it into user created for database and add it to database
     hashed_password = password_hashing.generate_hash_password(password)
     db_user = models.User(username=username, hashed_password=hashed_password)
     db.add(db_user)
@@ -87,6 +96,7 @@ def create_user(db: Session, username: str, password: str):
 
 
 def create_purchase(db: Session, user_id: int, coffee_id: int):
+    # make a purchase model with user_id and coffee_id and add it to database
     db_purchase = models.Purchase(user_id=user_id, coffee_id=coffee_id)
     db.add(db_purchase)
     db.commit()
@@ -96,6 +106,7 @@ def create_purchase(db: Session, user_id: int, coffee_id: int):
 
 # utils functions
 def hash_password(password: str):
+    # hash password with sha512 encryption
     salt = uuid.uuid4().hex
     hashed_password = hashlib.sha512(password.encode('utf-8') + salt.encode('utf-8')).hexdigest()
     return hashed_password
